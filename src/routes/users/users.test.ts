@@ -1,5 +1,5 @@
 import { testDB } from "libs/db";
-import { user_credential } from "tests/constant";
+import { TEST_USER } from "tests/constant";
 import { signupUserHelper } from "tests/helper";
 
 describe("User SignUp", () => {
@@ -15,7 +15,7 @@ describe("User SignUp", () => {
       const res = await testDB
         .request()
         .post("/users/signup")
-        .send(user_credential)
+        .send(TEST_USER)
         .set("Content-Type", "application/json");
       const body = res.body;
       expect(res.status).toBe(200);
@@ -35,7 +35,6 @@ describe("User SignUp", () => {
           first_name: "first_test",
           last_name: "last_test",
           password: "123456",
-          username: "username",
         })
         .set("Content-Type", "application/json");
       const body = res.body;
@@ -46,65 +45,17 @@ describe("User SignUp", () => {
       throw e;
     }
   });
-  it("Should not create user if username is not provided", async () => {
-    try {
-      const res = await testDB
-        .request()
-        .post("/users/signup")
-        .send({
-          first_name: "first_test",
-          last_name: "last_test",
-          email: "email@email.com",
-          password: "123456",
-        })
-        .set("Content-Type", "application/json");
-      const body = res.body;
-      expect(res.status).toBe(500);
-      expect(body.success).toBe(false);
-      expect(body.message).toBe("Username is required");
-    } catch (e) {
-      throw e;
-    }
-  });
   it("Should not create user if email already exist", async () => {
     try {
       const res = await testDB
         .request()
         .post("/users/signup")
-        .send({
-          first_name: "first_test",
-          last_name: "last_test",
-          email: "test1@test.com",
-          username: "username",
-          password: "123456",
-        })
+        .send(TEST_USER)
         .set("Content-Type", "application/json");
       const body = res.body;
       expect(res.status).toBe(500);
       expect(body.success).toBe(false);
       expect(body.message).toBe("Email already exist");
-    } catch (e) {
-      throw e;
-    }
-  });
-
-  it("Should not create user if username already exist", async () => {
-    try {
-      const res = await testDB
-        .request()
-        .post("/users/signup")
-        .send({
-          first_name: "first_test",
-          last_name: "last_test",
-          email: "test@test2.com",
-          username: "test1",
-          password: "123456",
-        })
-        .set("Content-Type", "application/json");
-      const body = res.body;
-      expect(res.status).toBe(500);
-      expect(body.success).toBe(false);
-      expect(body.message).toBe("Username already exist");
     } catch (e) {
       throw e;
     }
@@ -116,6 +67,7 @@ describe("User login", () => {
     await testDB.connect();
     await signupUserHelper();
   });
+
   afterAll(async () => {
     await testDB.disconnect();
   });
@@ -126,8 +78,8 @@ describe("User login", () => {
         .request()
         .post("/users/login")
         .send({
-          username: "test1",
-          password: "123456",
+          email: TEST_USER.email,
+          password: TEST_USER.password,
         })
         .set("Content-Type", "application/json");
       const body = res.body;
@@ -144,7 +96,7 @@ describe("User login", () => {
         .request()
         .post("/users/login")
         .send({
-          username: "wrong123@gmail.com",
+          email: "wrong123@gmail.com",
           password: "adafadff",
         })
         .set("Content-Type", "application/json");
@@ -163,28 +115,13 @@ describe("User login", () => {
         .request()
         .post("/users/login")
         .send({
-          username: "test@test2.com",
+          email: "test@test2.com",
           password: "wrongpassword",
         })
         .set("Content-Type", "application/json");
       expect(res.status).toBe(500);
       expect(res.body.success).toBe(false);
       expect(res.body.message).toBe("Invalid login credentials");
-    } catch (e) {
-      throw e;
-    }
-  });
-  it("should login with username", async () => {
-    try {
-      const res = await testDB
-        .request()
-        .post("/users/login")
-        .send({
-          username: "test1",
-          password: "123456",
-        })
-        .set("Content-Type", "application/json");
-      expect(res.status).toBe(200);
     } catch (e) {
       throw e;
     }

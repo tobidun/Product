@@ -5,19 +5,16 @@ import { IUser, UserModel } from "./users.model";
 class UserService {
   async createUser(data: IUser) {
     try {
-      const { username, email } = data;
-      if (!username) throw new Error("Username is required");
+      const { email } = data;
       if (!email) throw new Error("Email is required");
       if (!data.password) throw new Error("Password is required");
       const is_user_exist = await UserModel.findOne({
-        $or: [{ username }, { email }],
+        email,
       });
       if (is_user_exist?.email === email) {
         throw new Error("Email already exist");
       }
-      if (is_user_exist?.username === username) {
-        throw new Error("Username already exist");
-      }
+
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
       const newUser = await UserModel.create({ ...data });
@@ -28,10 +25,10 @@ class UserService {
     }
   }
 
-  async login(email: string, username: string, password: string) {
+  async login(email: string, password: string) {
     try {
       const profile = await UserModel.findOne({
-        $or: [{ email: email }, { username: username }],
+        email,
       });
       if (!profile) throw new Error("Invalid login credentials");
       const comparePassword = await bcrypt.compare(password, profile.password);

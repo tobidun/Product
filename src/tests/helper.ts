@@ -1,6 +1,6 @@
 import { testDB } from "libs/db";
 import { IUser } from "routes/users/users.model";
-import { TEST_PRODUCTS, user_credential } from "./constant";
+import { TEST_PRODUCTS, TEST_USER } from "./constant";
 import { IProduct, ProductModel } from "routes/products/products.model";
 
 export type SignUpResponseType = {
@@ -12,9 +12,7 @@ export async function signupUserHelper(
   user?: Partial<IUser>
 ): Promise<SignUpResponseType> {
   try {
-    return await userTestHelper.signUpUser(
-      user ? { ...user_credential, ...user } : user_credential
-    );
+    return await userTestHelper.signUpUser({ ...TEST_USER, ...user });
   } catch (e) {
     throw e;
   }

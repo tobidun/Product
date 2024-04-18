@@ -61,8 +61,9 @@ class ProductService {
 
   async deleteProduct(id: string, userId: string) {
     try {
-      const is_user = await ProductModel.findOne({ _id: id, user: userId });
-      if (!is_user) return unauthorizedUser("Unauthorized request");
+      const isUser = await ProductModel.findOne({ _id: id, user: userId });
+      console.log({ isUser });
+      if (!isUser) return unauthorizedUser("Unauthorized request");
 
       await ProductModel.findOneAndUpdate({ _id: id }, { isDeleted: true });
       return { message: "Product deleted successfully" };

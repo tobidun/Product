@@ -1,8 +1,7 @@
-export const user_credential = {
+export const TEST_USER = {
   first_name: "John",
   last_name: "Doe",
-  email: "test1@test.com",
-  username: "test1",
+  email: "test@example.com",
   password: "123456",
 };
 

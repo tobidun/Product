@@ -15,8 +15,8 @@ UserRouter.post("/signup", async (req, res, next) => {
 
 UserRouter.post("/login", async (req, res, next) => {
   try {
-    const { email, username, password } = req.body;
-    const result = await userService.login(email, username, password);
+    const { email, password } = req.body;
+    const result = await userService.login(email, password);
     res.send(result);
   } catch (e) {
     next(e);

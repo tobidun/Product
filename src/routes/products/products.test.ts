@@ -5,13 +5,16 @@ import { TEST_PRODUCT, TEST_PRODUCTS } from "tests/constant";
 
 describe("Find by Id", () => {
   let products: IProduct[];
+
   beforeAll(async () => {
     await testDB.connect();
     products = await createProductForTest();
   });
+
   afterAll(async () => {
     await testDB.disconnect();
   });
+
   it("find product by id", async () => {
     try {
       const product = products[2];
@@ -53,7 +56,10 @@ describe("Create a new Product", () => {
   let accessToken: string;
   beforeAll(async () => {
     await testDB.connect();
-    const userLoggedInRes = signupUserHelper();
+    const userLoggedInRes = signupUserHelper({
+      email: "user@example.com",
+      password: "password1",
+    });
     accessToken = (await userLoggedInRes).accessToken;
   });
   afterAll(async () => {
@@ -63,67 +69,63 @@ describe("Create a new Product", () => {
     const res = await testDB
       .request()
       .post("/products")
-      .send({
-        name: TEST_PRODUCT.name,
-        price: TEST_PRODUCT.price,
-      })
+      .send(TEST_PRODUCT)
       .set("authorization", `Bearer ${accessToken}`);
     expect(res.status).toBe(200);
   });
 });
 
 describe("Delete Product", () => {
-  let accessToken: string;
+  let accessToken: string = "";
   let products: IProduct[];
+
   beforeAll(async () => {
     await testDB.connect();
-    const pd = await createProductForTest();
-    products = pd;
-    const userLoggedInRes = signupUserHelper();
-    accessToken = (await userLoggedInRes).accessToken;
+    products = await createProductForTest();
+
+    const response = await signupUserHelper({
+      email: "user@example2.com",
+      password: "password12",
+    });
+    console.log(response);
+    accessToken = response.accessToken;
   });
+
   afterAll(async () => {
     await testDB.disconnect();
   });
+
   it("should delete product", async () => {
-    try {
-      const product = products[2];
-      const productId = String(product._id);
-      const res = await testDB
-        .request()
-        .delete(`/products/${productId}`)
-        .set("authorization", `Bearer ${accessToken}`)
-        .send({ is_deleted: true });
-      const body = res.body;
-      console.log(body);
-      expect(res.statusCode).toBe(200);
-      expect(body.success).toBe(true);
-      expect(body.result.message).toBe("Product deleted successfully");
-    } catch (e) {
-      throw e;
-    }
+    console.log("accessToken: " + accessToken);
+    const product = products[2];
+    const productId = String(product._id);
+    const res = await testDB
+      .request()
+      .delete(`/products/${productId}`)
+      .set("authorization", `Bearer ${accessToken}`)
+      .send({ is_deleted: true });
+    const body = res.body;
+    console.log(body);
+    expect(res.statusCode).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.result.message).toBe("Product deleted successfully");
   });
 
   it("should not delete if not owner of the product", async () => {
-    try {
-      const product = products[1];
-      const productId = String(product._id);
-      const newUserRes = await signupUserHelper({
-        email: "anotheruser@test.com",
-        password: "password",
-        username: "another1",
-      });
-      const res = await testDB
-        .request()
-        .delete(`/products/${productId}`)
-        .send({ is_deleted: true })
-        .set("authorization", `Bearer ${newUserRes.accessToken}`);
-      expect(res.statusCode).toBe(401);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe("Unauthorized request");
-    } catch (e) {
-      throw e;
-    }
+    const product = products[1];
+    const productId = String(product._id);
+    const newUserRes = await signupUserHelper({
+      email: "anotheruser@test.com",
+      password: "password",
+    });
+    const res = await testDB
+      .request()
+      .delete(`/products/${productId}`)
+      .send({ is_deleted: true })
+      .set("authorization", `Bearer ${newUserRes.accessToken}`);
+    expect(res.statusCode).toBe(401);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Unauthorized request");
   });
 });
 
@@ -162,7 +164,6 @@ describe("Edit product", () => {
       const newUserRes = await signupUserHelper({
         email: "another5@gmail.com",
         password: "password",
-        username: "another5",
       });
       const res = await testDB
         .request()
