@@ -115,10 +115,9 @@ class UserTestHelper {
       testDB
         .request()
         .get("/users/me")
-        .set("Content-Type", "application/json")
         .set("authorization", `Bearer ${accessToken}`)
         .then((res) => {
-          resolve(res.body.result);
+          resolve(res.body);
         })
         .catch((e) => {
           reject(e);

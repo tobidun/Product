@@ -24,6 +24,7 @@ class TestDB {
   }
 
   request(): request.SuperTest<request.Test> {
+    //@ts-ignore
     return request(server);
   }
 }

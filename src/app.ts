@@ -1,14 +1,15 @@
 import DBG from "debug";
+import cors from "cors";
+import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import { useDataBase } from "libs/db";
-
-import dotenv from "dotenv";
-
 import { ProductRouter } from "routes/products/products.controller";
 import { UserRouter } from "routes/users/users.controller";
 export const app = express();
 const debug = DBG("product:server");
 dotenv.config();
+
+app.use(cors());
 
 process.env.NODE_ENV !== "test" &&
   useDataBase()
