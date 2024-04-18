@@ -18,6 +18,14 @@ export async function signupUserHelper(
   }
 }
 
+export async function loginUserForTest(): Promise<SignUpResponseType> {
+  try {
+    return await userTestHelper.loginUser(TEST_USER);
+  } catch (e) {
+    throw e;
+  }
+}
+
 export async function createProductForTest(
   props?: CreateProductForTestPayload
 ): Promise<IProduct[]> {
@@ -83,18 +91,18 @@ class UserTestHelper {
   }
 
   async loginUser({
-    username,
+    email,
     password,
   }: {
     password: string;
-    username: string;
+    email: string;
   }): Promise<SignUpResponseType> {
     return new Promise((resolve, reject) => {
       testDB
         .request()
         .post("/users/login")
         .send({
-          username,
+          email,
           password,
         })
         .set("Content-Type", "application/json")

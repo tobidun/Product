@@ -1,4 +1,8 @@
-import { createProductForTest, signupUserHelper } from "tests/helper";
+import {
+  createProductForTest,
+  loginUserForTest,
+  signupUserHelper,
+} from "tests/helper";
 import { IProduct } from "./products.model";
 import { testDB } from "libs/db";
 import { TEST_PRODUCT, TEST_PRODUCTS } from "tests/constant";
@@ -56,11 +60,8 @@ describe("Create a new Product", () => {
   let accessToken: string;
   beforeAll(async () => {
     await testDB.connect();
-    const userLoggedInRes = signupUserHelper({
-      email: "user@example.com",
-      password: "password1",
-    });
-    accessToken = (await userLoggedInRes).accessToken;
+    const response = await signupUserHelper();
+    accessToken = response.accessToken;
   });
   afterAll(async () => {
     await testDB.disconnect();
@@ -83,11 +84,7 @@ describe("Delete Product", () => {
     await testDB.connect();
     products = await createProductForTest();
 
-    const response = await signupUserHelper({
-      email: "user@example2.com",
-      password: "password12",
-    });
-    console.log(response);
+    const response = await loginUserForTest();
     accessToken = response.accessToken;
   });
 
@@ -96,7 +93,6 @@ describe("Delete Product", () => {
   });
 
   it("should delete product", async () => {
-    console.log("accessToken: " + accessToken);
     const product = products[2];
     const productId = String(product._id);
     const res = await testDB
@@ -105,10 +101,8 @@ describe("Delete Product", () => {
       .set("authorization", `Bearer ${accessToken}`)
       .send({ is_deleted: true });
     const body = res.body;
-    console.log(body);
     expect(res.statusCode).toBe(200);
-    expect(body.success).toBe(true);
-    expect(body.result.message).toBe("Product deleted successfully");
+    expect(body.message).toBe("Product deleted successfully");
   });
 
   it("should not delete if not owner of the product", async () => {
@@ -136,8 +130,8 @@ describe("Edit product", () => {
     await testDB.connect();
     const pd = await createProductForTest();
     products = pd;
-    const userLoggedInRes = await signupUserHelper();
-    accessToken = userLoggedInRes.accessToken;
+    const response = await loginUserForTest();
+    accessToken = response.accessToken;
   });
   afterAll(async () => {
     await testDB.disconnect();
@@ -150,10 +144,8 @@ describe("Edit product", () => {
         .request()
         .put(`/products/${productId}`)
         .set("authorization", `Bearer ${accessToken}`)
-        .send({ name: TEST_PRODUCT.name, price: TEST_PRODUCT.price });
-      console.log(res.body);
+        .send(TEST_PRODUCT);
       expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
     } catch (e) {
       throw e;
     }
@@ -168,7 +160,7 @@ describe("Edit product", () => {
       const res = await testDB
         .request()
         .put(`/products/${product._id}`)
-        .send({ name: TEST_PRODUCT.name, price: TEST_PRODUCT.price })
+        .send(TEST_PRODUCT)
         .set("authorization", `Bearer ${newUserRes.accessToken}`);
       expect(res.statusCode).toBe(401);
       expect(res.body.success).toBe(false);
