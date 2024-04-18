@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "jsxImportSource": "js",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "inlineSourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "baseUrl": "src"
+  },
+  "include": ["/**/*.ts"],
+  "exclude": ["node_modules"]
+}

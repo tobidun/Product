@@ -1,0 +1,31 @@
+export const user_credential = {
+  first_name: "John",
+  last_name: "Doe",
+  email: "test1@test.com",
+  username: "test1",
+  password: "123456",
+};
+
+export const TEST_PRODUCTS = [
+  {
+    name: "shoe",
+    price: 2,
+  },
+  {
+    name: "cap",
+    price: 3,
+  },
+  {
+    name: "shirt",
+    price: 4,
+  },
+  {
+    name: "skirt",
+    price: 5,
+  },
+];
+
+export const TEST_PRODUCT = {
+  name: "shoe",
+  price: 2,
+};
