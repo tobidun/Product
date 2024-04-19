@@ -1,7 +1,7 @@
 import DBG from "debug";
 import { server } from "./server";
 
-const debug = DBG("product:server");
+const debug = DBG("mainstack-product-test:server");
 export const port = normalizePort(process.env.PORT || 3000);
 
 export function normalizePort(val: any) {

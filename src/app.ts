@@ -6,7 +6,7 @@ import { useDataBase } from "libs/db";
 import { ProductRouter } from "routes/products/products.controller";
 import { UserRouter } from "routes/users/users.controller";
 export const app = express();
-const debug = DBG("product:server");
+const debug = DBG("mainstack-product-test:server");
 dotenv.config();
 
 app.use(cors());
