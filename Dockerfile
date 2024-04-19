@@ -1,20 +1,17 @@
-# Use an official Node.js runtime as a base image
-FROM node:14
+FROM node:18
 
-# Set working directory in the container
+ARG DATABASE_ENDPOINT
+
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
+ENV DATABASE_ENDPOINT=$DATABASE_ENDPOINT
+
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
 
-# Expose port
 EXPOSE 3000
 
-# Command to run the application
 CMD ["npm", "start"]
