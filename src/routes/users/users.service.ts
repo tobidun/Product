@@ -8,16 +8,19 @@ class UserService {
       const { email } = data;
       if (!email) throw new Error("Email is required");
       if (!data.password) throw new Error("Password is required");
-      const is_user_exist = await UserModel.findOne({
+      const existingUser = await UserModel.findOne({
         email,
       });
-      if (is_user_exist?.email === email) {
+      if (existingUser?.email === email) {
         throw new Error("Email already exist");
       }
 
       const salt = await bcrypt.genSalt(10);
-      data.password = await bcrypt.hash(data.password, salt);
-      const newUser = await UserModel.create({ ...data });
+      const hashedPassword = await bcrypt.hash(data.password, salt);
+      const newUser = await UserModel.create({
+        ...data,
+        password: hashedPassword,
+      });
       const accessToken = await token.createAccessToken(newUser._id);
       return { success: true, accessToken: accessToken };
     } catch (e) {

@@ -26,7 +26,7 @@ export function onError(error: any) {
 
   const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // hannlde specific listen error with friendly message
+  // handle specific listen error with friendly message
   switch (error.code) {
     case "EACCES":
       console.error(bind + "requires elevatd privileges");

@@ -5,7 +5,7 @@ class ProductService {
   async createProduct(body: IProduct) {
     try {
       const { name, price, user } = body;
-      if (!name.trim) throw new Error("Name is required");
+      if (!name.trim()) throw new Error("Name is required");
       if (!price) throw new Error("Price is required");
       const product = await ProductModel.create({ name, price, user });
       return product;

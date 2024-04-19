@@ -8,8 +8,8 @@ UserRouter.post("/signup", async (req, res, next) => {
   try {
     const result = await userService.createUser(req.body);
     res.send(result);
-  } catch (err) {
-    next(err);
+  } catch (e) {
+    next(e);
   }
 });
 
